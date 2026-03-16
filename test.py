@@ -6,10 +6,9 @@ import re
 TOKEN = '8616582923:AAE5PJKkK7LdiL4xBPfrz4SCKfmefq0b0nw'
 bot = telebot.TeleBot(TOKEN)
 
-# Память прогресса пользователей
 user_progress = {}
 
-# Словари вариантов фраз Мерта
+
 WORDS = {
     'start': ['los get\'s', 'los get s', 'los gehts', 'los geht es', 'los', 'let’s go', 'lets go', 'поехали'],
     'cafe': ['karte', 'geburtstagskarte', 'открытка', 'grusskarte', 'postkarte'],
@@ -23,7 +22,6 @@ def get_hint_keyboard():
     return markup
 
 def clean_text(text):
-    # Убираем все лишние символы для точного сравнения
     return re.sub(r'[^\w\s\']', '', text.lower()).strip()
 
 @bot.message_handler(commands=['start'])
