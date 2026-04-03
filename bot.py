@@ -117,6 +117,12 @@ def game_logic(message):
         )
 
     else:
-        bot.send_message(chat_id, 'Ich verstehe dich nicht ganz. Probier es nochmal oder nutze den Tipp-Button.')
+        bot.send_message(chat_id, 'Ich verstehe dich nicht ganz. Probier es nochmal oder nutze den Tipp-Button.'
 
-bot.polling(none_stop=True)
+if __name__ == "__main__":
+    while True:
+        try:
+            print("Бот запущен...")
+            bot.polling(none_stop=True, timeout=60)
+        except Exception as e:
+            print("Ошибка:", e)
