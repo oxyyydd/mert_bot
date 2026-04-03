@@ -2,12 +2,12 @@ import telebot
 from telebot import types
 import re
 
-TOKEN = '8621507187:AAGF7_Xwgc3RpX8LljvXYFv4vxEMEWcFCws'
+TOKEN = '8616582923:AAE5PJKkK7LdiL4xBPfrz4SCKfmefq0b0nw'
 bot = telebot.TeleBot(TOKEN)
 
 user_progress = {}
 
-MAP_LINK = "https://maps.app.goo.gl/qVEovcXQHQ5tb7ZB8?g_st=ic"
+MAP_LINK = "https://maps.app.goo.gl?link=https://www.google.com/maps/@/data%3D!4m5!7m4!1m2!1s103222502778246472204!2sChZ5cWVncUhrY2c3WmJieDRiUlFncGVBEggHBk6QgS__Pg%253D%253D!2e2?hl%3Dru&apn=com.google.android.apps.maps&amv=949000000&ius=comgooglemapsurl&isi=585027354&ct=location-sharing-fdl&mt=8&pt=9008&ibi=com.google.Azimuth&ibi=com.google.Azimuth.MessagesExtension&ibi=com.google.Bzimuth&ibi=com.google.Bzimuth.MessagesExtension&ibi=com.google.Czimuth&ibi=com.google.Czimuth.MessagesExtension&ibi=com.google.Dzimuth&ibi=com.google.Dzimuth.MessagesExtension&ibi=com.google.Maps&ibi=com.google.Maps.MessagesExtension&ibi=com.google.Rzimuth&ibi=com.google.Rzimuth.MessagesExtension&afl=https://www.google.com/maps/@/data%3D!4m5!7m4!1m2!1s103222502778246472204!2sChZ5cWVncUhrY2c3WmJieDRiUlFncGVBEggHBk6QgS__Pg%253D%253D!2e2?hl%3Dru&ifl=https://www.google.com/maps/@/data%3D!4m5!7m4!1m2!1s103222502778246472204!2sChZ5cWVncUhrY2c3WmJieDRiUlFncGVBEggHBk6QgS__Pg%253D%253D!2e2?hl%3Dru"
 
 WORDS = {
     'start': ['los geht', 'los', 'lets go'],
@@ -25,14 +25,15 @@ def get_hint_keyboard():
 def clean_text(text):
     return re.sub(r'[^\w\s]', '', text.lower()).strip()
 
-def match(step_words, text):
-    return any(word in text for word in step_words)
+def match(words, text):
+    return any(word in text for word in words)
 
 @bot.message_handler(commands=['start'])
 def start_cmd(message):
     user_progress[message.chat.id] = 'waiting_start'
     bot.send_message(
         message.chat.id,
+        'Guten Morgen, kotjenok. Wie schön, dass es dich gibt! Ich habe etwas für dich vorbereitet.\n'
         'Steh auf, putz dir die Zähne und dann treffen wir uns um 12:30 Uhr am Bahnhof.'
     )
 
@@ -46,7 +47,11 @@ def game_logic(message):
     # ПОДСКАЗКИ
     if 'tipp' in raw_text:
         if step == 'sweater':
-            bot.send_message(chat_id, f'Hier ist der Ort: {MAP_LINK}')
+            bot.send_message(
+                chat_id,
+                f'Hier ist dein Hinweis: <a href="{MAP_LINK}">Ort auf Google Maps ansehen</a>\n(klicke auf den Link)',
+                parse_mode='HTML'
+            )
         elif step == 'call':
             try:
                 with open('photo_2026-03-12_14-40-27.jpg', 'rb') as photo:
@@ -56,14 +61,13 @@ def game_logic(message):
                         caption='Schade, mein Mann ist Loch 🕳️. Hast du Fredi nicht erkannt?'
                     )
             except:
-                bot.send_message(chat_id, 'Schade, mein Mann ist Loch 🕳️. Hast du Fredi nicht erkannt?')
+                bot.send_message(chat_id, 'Tipp: Ruf die richtige Person an 😉')
         else:
             bot.send_message(chat_id, 'Hier gibt es keinen Tipp mehr 😏')
         return
 
     # ЭТАПЫ
 
-    # START → SWEATER
     if step == 'waiting_start' and match(WORDS['start'], text):
         user_progress[chat_id] = 'sweater'
         bot.send_message(chat_id,
@@ -74,7 +78,6 @@ def game_logic(message):
             reply_markup=get_hint_keyboard()
         )
 
-    # SWEATER → KARTE
     elif step == 'sweater' and match(WORDS['sweater'], text):
         user_progress[chat_id] = 'karte'
         bot.send_message(chat_id,
@@ -86,7 +89,6 @@ def game_logic(message):
             reply_markup=get_hint_keyboard()
         )
 
-    # KARTE → CALL
     elif step == 'karte' and match(WORDS['karte'], text):
         user_progress[chat_id] = 'call'
         bot.send_message(chat_id,
@@ -96,7 +98,6 @@ def game_logic(message):
             reply_markup=get_hint_keyboard()
         )
 
-    # CALL → CAKE
     elif step == 'call' and match(WORDS['call'], text):
         user_progress[chat_id] = 'cake'
         bot.send_message(chat_id,
@@ -106,7 +107,6 @@ def game_logic(message):
             'Schreib mir das Wort, sobald du es entdeckt hast.'
         )
 
-    # CAKE → MATTE → ФИНАЛ
     elif step == 'cake' and match(WORDS['matte'], text):
         user_progress[chat_id] = 'home'
         bot.send_message(chat_id,
