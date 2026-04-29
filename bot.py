@@ -6,7 +6,7 @@ from telegram.ext import Application, MessageHandler, filters, ContextTypes
 TOKEN = os.getenv("BOT_TOKEN")  # Токен из переменных окружения
 
 async def sleepy_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("я сейчас сплю, не буди меня.💤 Приходи на утро. ")
+    await update.message.reply_text("У меня технические работы, сорян. ")
 
 def main():
     if not TOKEN:
